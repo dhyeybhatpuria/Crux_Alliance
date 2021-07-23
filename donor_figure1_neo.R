@@ -18,7 +18,7 @@ if(!exists("data_filtering", mode="function")) source("base_functions.R")
 
 master <- data_filtering("crux_data_2015-2019.xlsx")
 
-write.xlsx(master, file = "crux_2015-2019_db.xlsx",sheetName = "newData", append = FALSE)
+# write.xlsx(master, file = "crux_2015-2019_db.xlsx",sheetName = "newData", append = FALSE)
 master = master %>% 
   rename(
     Finance.Instrument =`Financial Instrument`,
