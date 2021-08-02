@@ -27,26 +27,18 @@ master = master %>%
     Sector = `Sector (detailed)`
   )
 
-# Rename Sectors
-master$Sector[grepl("II.1. Transport and Storage", master$Sector, fixed = TRUE)] <- "Transport and Storage"
-master$Sector[grepl("II.3. Energy", master$Sector, fixed = TRUE)] <- "Energy"
-master$Sector[grepl("IV.1. General Environment Protection", master$Sector, fixed = TRUE)] <- "Gen. Environment Protection"
-master$Sector[grepl("IV.2. Other Multisector", master$Sector, fixed = TRUE)] <- "Other Multisector"
-master$Sector[grepl("III.2.a. Industry", master$Sector, fixed = TRUE)] <- "Industry"
-master$Sector[grepl("III.2. Industry, Mining, Construction", master$Sector, fixed = TRUE)] <- "Industry, Mining, Construction"
-master$Sector[grepl("III.2.b. Mineral Resources and Mining", master$Sector, fixed = TRUE)] <- "Mineral Resources and Mining"
 
 master_selected = subset(master, master$Provider == countryname)
 
-master_switz = master_selected[, c('Provider', 'Sector', 'Finance.Instrument','USD.thousand')]
+master_switz = master_selected[, c('Provider', 'Recipient','USD.thousand')]
 
 # output <- master_selected %>% group_by(Finance.Instrument, Sector) %>% summarise(Commitment = sum(USD.thousand))
 
-wrangled_t <- aggregate(USD.thousand ~ Provider + Finance.Instrument, master_switz, sum)
+wrangled_t <- aggregate(USD.thousand ~ Provider + Recipient, master_switz, sum)
 wrangled_t1 <- aggregate(USD.thousand ~ Finance.Instrument + Sector, master_switz, sum)
 
 names(wrangled_t)[names(wrangled_t) == "Provider"] <- "source"
-names(wrangled_t)[names(wrangled_t) == "Finance.Instrument"] <- "target"
+names(wrangled_t)[names(wrangled_t) == "Recipient"] <- "target"
 names(wrangled_t)[names(wrangled_t) == "USD.thousand"] <- "value"
 names(wrangled_t1)[names(wrangled_t1) == "Finance.Instrument"] <- "source"
 names(wrangled_t1)[names(wrangled_t1) == "Sector"] <- "target"
@@ -54,6 +46,8 @@ names(wrangled_t1)[names(wrangled_t1) == "USD.thousand"] <- "value"
 
 
 total <- rbind(wrangled_t, wrangled_t1)
+
+total <- wrangled_t
 
 regions <- unique(as.character(total$target))
 nodes_names <-unique(as.character(total$source))
@@ -132,7 +126,7 @@ p_alpha <- sankeyNetwork(Links = thedf$links, Nodes = thedf$nodes, Source = "tar
                          units = "USD", 
                          fontSize = 16, nodeWidth = 30, nodePadding = 40, 
                          fontFamily='Helvetica', LinkGroup = "energy_type",
-                         margin = list("left"=150))
+                         margin = list("left"=200))
 
 # now let's use the new htmlwidget function
 #  onRender
@@ -149,3 +143,7 @@ function(el,x){
     .attr("text-anchor", "start");
 }
 ')
+
+saveNetwork(p_alpha, "sn.html")
+
+webshot("sn.html", "simpleNetwork.png")

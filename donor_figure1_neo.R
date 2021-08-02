@@ -1,15 +1,4 @@
-library(ggplot2)
-if (!require("ggalluvial")) {
-  install.packages("ggalluvial")
-  library(ggalluvial)
-}
-library(gridExtra)
-library(grid)
-library(data.table)
-library(dplyr)
-library(networkD3)
-library(tidyr)
-library(htmlwidgets)
+
 
 countryname = 'Switzerland'
 if(!exists("data_filtering", mode="function")) source("base_functions.R")
@@ -33,7 +22,6 @@ master = master %>%
 
 
 # master$Mitigation
-
 
 master_selected = subset(master, master$Provider == countryname)
 
