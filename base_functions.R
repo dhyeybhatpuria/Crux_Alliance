@@ -192,6 +192,7 @@ data_filtering = function(inputdata){
   study_countries$`Climate objective (applies to Rio-marked data only) or climate component`[which(study_countries$Provider == "GCF")] <- "Principal"
   # Remove rows with Significant
   study_countries_selected<-study_countries[!(study_countries$`Climate objective (applies to Rio-marked data only) or climate component`=="Significant"),]
+  study_countries_selected<-study_countries_selected[!(study_countries_selected$`Mitigation objective (applies to Rio-marked data only)`=="Significant"),]
   
   study_countries_selected$`Adaptation-related development finance - Commitment - 2019 USD thousand`[study_countries_selected$`Overlap - Commitment - 2019 USD thousand` > 0] <- 0 
   study_countries_selected$`Mitigation-related development finance - Commitment - 2019 USD thousand`[study_countries_selected$`Overlap - Commitment - 2019 USD thousand` > 0] <- 0 
@@ -252,8 +253,58 @@ data_filtering = function(inputdata){
   total$`Sector (detailed)`[grepl("III.2.b. Mineral Resources and Mining", total$`Sector (detailed)`, fixed = TRUE)] <- "Mineral Resources and Mining"
   
   
+  total = total %>% 
+    rename(
+      Finance.Instrument =`Financial Instrument`,
+      Overlap.Commitment = `Overlap - Commitment - 2019 USD thousand`,
+      Adaptation = `Adaptation-related development finance - Commitment - 2019 USD thousand`,
+      Mitigation = `Mitigation-related development finance - Commitment - 2019 USD thousand`,
+      Sector = `Sector (detailed)`
+    )
+  
   return(total)
 }
+
+
+data_basic_cleaning = function(filename){
+  read_excel
+  inputdata = read.csv(filename,header = TRUE)
+  inputdata = inputdata %>% 
+    rename(
+      Finance.Instrument =Financial.Instrument,
+      Overlap.Commitment = Overlap...Commitment...2018.USD.thousand,
+      Adaptation = Adaptation.related.development.finance...Commitment...2018.USD.thousand,
+      Mitigation = Mitigation.related.development.finance...Commitment...2018.USD.thousand,
+      Sector = Sector..detailed.,
+      Year = ï..Year)
+  
+  
+  inputdata$Recipient[inputdata$Recipient == "China (People's Republic of)"] <- "China"
+  inputdata$Recipient[inputdata$Recipient == "Viet Nam"] <- "Vietnam"
+  
+  inputdata$Finance.Instrument[inputdata$Finance.Instrument == "Debt instrument"] <- "Debt"
+  inputdata$Finance.Instrument[inputdata$Finance.Instrument == "Mezzanine finance instrument"] <- "Mezzanine"
+  inputdata$Finance.Instrument[inputdata$Finance.Instrument == "Equity and shares in collective investment vehicles"] <- "Equity & shares"
+  
+  inputdata$Provider[ inputdata$Provider == "EU Institutions (excl. EIB)"] <- "EU"
+  
+  temprows= subset(inputdata, inputdata$Sector == "II.1. Transport & Storage")
+  temprows$Sector <- gsub("II.1. Transport & Storage","II.1. Transport and Storage",temprows$Sector)
+  permarows<-subset(inputdata, Sector !="II.1. Transport & Storage")
+  total <- rbind(permarows,temprows)
+  # Rename Sectors
+  total$Sector[grepl("II.1. Transport and Storage", total$Sector, fixed = TRUE)] <- "Transport and Storage"
+  total$Sector[grepl("II.3. Energy", total$Sector, fixed = TRUE)] <- "Energy"
+  total$Sector[grepl("IV.1. General Environment Protection", total$Sector, fixed = TRUE)] <- "Gen. Environment Protection"
+  total$Sector[grepl("IV.2. Other Multisector", total$Sector, fixed = TRUE)] <- "Other Multisector"
+  total$Sector[grepl("III.2.a. Industry", total$Sector, fixed = TRUE)] <- "Industry"
+  total$Sector[grepl("III.2. Industry, Mining, Construction", total$Sector, fixed = TRUE)] <- "Industry, Mining, Construction"
+  total$Sector[grepl("III.2.b. Mineral Resources and Mining", total$Sector, fixed = TRUE)] <- "Mineral Resources and Mining"
+  
+  total$USD.thousand = total$Mitigation + total$Adaptation + total$Overlap.Commitment
+  return(total)
+}
+
 
 
 select_2015_2019 = function(inputdata){
