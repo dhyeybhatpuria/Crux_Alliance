@@ -628,6 +628,17 @@ fund.colors <- c("Commitments" = "#005596",#"Orange",#"#71d0f5", # 09488C
                    "Disbursements" = "#ca6b18"#"Blue"#"#47732e" # BE000D
                    )
 
+alloc.colors <- c("Debt"=  "#4c8fba" , "Grant"="#f4b810",
+                  "Mezzanine" = "#2ac2c2","Equity & shares" = "#de663e" )
+# 4c8fba
+# 2ac2c2
+# f4b810
+# de663e
+# ff912b
+
+
+
+
 # https://sashamaps.net/docs/resources/20-colors/
 donor_sector.colors <- c("Transport policy and administrative management" = "#fabed4", # 09488C 
                     "Energy policy and administrative management" = "#ffd8b1", # BE000D
@@ -657,3 +668,16 @@ donor_country.colors<- c("Australia" = "#800000", # 09488C
                          "UK" = "#000075",
                          "USA" = '#469990',
                          "Netherlands"="#808000")# 7B5931
+
+donor_count_multilat_colors<- c("Asian Development Bank" = "#800000", # 09488C 
+                         "Canada" = "#9A6324", # BE000D
+                         "Denmark" ="#dcbeff", # 118070  
+                         "France" = "#f032e6", #107930 
+                         "Germany" = "#911eb4", # D44E8A     
+                         "Japan" = "#4363d8", #E16008 
+                         "Korea" = "#bfef45", #149bed
+                         "EIB" = "#f58231", # 809F19
+                         "Switzerland" = "#e6194B",  # E4AD09
+                         "United Kingdom" = "#000075",
+                         "United States" = '#469990',
+                         "GCF"="#808000", "World Bank" = "#b74a70")# 7B5931
