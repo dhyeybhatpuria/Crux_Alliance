@@ -1,7 +1,11 @@
 
 masterdata <- read_excel("crux_data_2015-2019.xlsx") #
+# masterdata <- read_excel("crdf_master_10082021.xlsx") # TESTING ONLY
+
 
 inputdata =  read_excel("Search_terms_MTA_Crux_CT_R_version.xlsx")
+
+
 inputdata = inputdata %>% 
   rename(
     Finance.Instrument = `Financial Instrument`,
@@ -46,15 +50,20 @@ rm(total)
 masterdata$ID <- seq.int(nrow(masterdata))
 study_countries = subset(masterdata, subset = Recipient %in% c(
   'India',"China (People's Republic of)",'Viet Nam','Finland','Pakistan','Philippines','Indonesia','Thailand','South Africa','Brazil','Mexico'))
+
 study_countries = subset(study_countries, subset = Provider %in% c(
-  'AsDB', #Asian Development Bank', 
+  'AsDB', #Asian Development Bank',
   'EIB',#"EU Institutions (EIB)",
-  "EU Institutions (excl. EIB)", 
+  "EU Institutions (excl. EIB)",
   'GCF', #'Green Climate Fund',
   'WB', # 'World Bank'
-  'Australia', 'Canada','Denmark','France','Germany', 'Japan', 'Korea', 
+  'Australia', 'Canada','Denmark','France','Germany', 'Japan', 'Korea',
   'Netherlands', 'Sweden', 'Switzerland', 'United Kingdom','United States'
 ))
+# 
+# study_countries = subset(study_countries, subset = Provider %in% c(
+#   'UNDP', 'UNEP','IRENA','Australia', 'Sweden','Netherlands'
+# ))
 
 # transport and storage; Energy; Industry, construction and mining; General environment protection; and Other multisector
 with_transport = sqldf("select * from study_countries where `Sector (detailed)` LIKE '%transport%'")

@@ -1,7 +1,8 @@
 
 if(!exists("data_filtering", mode="function")) source("base_functions.R")
 
-df <- donor_perspective_analysis("Bilateraldonors_2015-2019_NH.xlsx",donordb = TRUE)
+# df <- donor_perspective_analysis("Bilateraldonors_2015-2019_NH.xlsx",donordb = TRUE)
+df <- data_merged
 datatype= "Disbursements" # Disbursements Commitments
 
 countries = unique(df$Recipient)

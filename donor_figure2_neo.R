@@ -13,26 +13,38 @@ for (countryofinterest in countries) {
   master_selected = subset(master, master$Provider == countryofinterest)
   # master_selected = master
   # In case only one type of finance
-  output <- master_selected %>% group_by(Year, Recipient) %>% summarise(Commitment = sum(USD.thousand))
+  output <- master_selected %>% group_by(Year, Recipient) %>% summarise(Commitment = sum(USD.thousand))#%>%
+    # mutate(percent = Commitment/sum(Commitment))
+  output$percent <- output$Commitment/sum(output$Commitment)
   output$Commitment <- output$Commitment * 1000
   titletext = paste("Year-wise commitment by", countryofinterest ,"to recipient country (2015-2019)")
   
   plt = ggplot(output, aes(fill=Recipient, y=Commitment, x=Year)) + # 
     geom_bar(stat="identity") +#stat="identity" position="dodge",
     # geom_line(aes(x=Year, y=Commitment),stat="identity")+
+    # scale_y_continuous(labels = scales::comma) + 
+    # function(x) format(x, big.mark = ".", scientific = FALSE)
     scale_y_continuous(labels = addUnits)+
-    labs(title = titletext) +
+    # 
+    # label_number(accuracy = NULL, scale = 1, 
+    #              prefix = "", suffix = "",
+    #              big.mark = " ", decimal.mark = ".")
+    geom_text(aes(label=ifelse(percent >= 0.01, scales::comma(Commitment, accuracy=0.1,big.mark = ",")," ")),
+              position=position_stack(vjust=0.5), colour="black",size = 5) +
+    # geom_text(aes(label=ifelse(percent >= 0.09, paste0(sprintf("%.2f", Commitment)," "),"")),
+    #           position=position_stack(vjust=0.5), colour="black",size = 5) +
+    labs(title = titletext, y="Commitments (USD)") +
     scale_fill_manual(values=country.colors)
   # +facet_wrap(~ Recipient,scales="free")
   
   output_name_cumul = paste0("fig2_donor_commit2country_",countryofinterest,".png")
   png(output_name_cumul, width = 300, height = 200, units='mm', res = 300)
     print(plt + theme_Publication(base_size=14, base_family="helvetica")) # scale_colour_Publication() +
-  Sys.sleep(3)  
+  Sys.sleep(2)  
   dev.off()
-  
 }
 
+#######################
 
 
 

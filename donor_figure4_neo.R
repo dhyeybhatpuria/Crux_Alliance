@@ -7,7 +7,9 @@ for (countryofinterest in countries) {
   print(countryofinterest)
   master_selected = subset(master, master$Provider == countryofinterest)
   # In case only one type of finance
-  output <- master_selected %>% group_by(Year, Sector) %>% summarise(Commitment = sum(USD.thousand))
+  output <- master_selected %>% group_by(Year, Sector) %>% summarise(Commitment = sum(USD.thousand)) #%>%
+    # mutate(percent = Commitment/sum(Commitment))
+  output$percent = output$Commitment/sum(output$Commitment)
   output$Commitment <- output$Commitment * 1000
   
   titletext = paste("Year-wise commitment by", countryofinterest ,"for each sector (2015-2019)")
@@ -15,7 +17,12 @@ for (countryofinterest in countries) {
   plt = ggplot(output, aes(fill=Sector, y=Commitment, x=Year)) + # 
     geom_bar(stat="identity") +#stat="identity" position="dodge",
     # geom_line(aes(x=Year, y=Commitment),stat="identity")+
+    # scale_y_continuous(labels = scales::comma) + 
     scale_y_continuous(labels = addUnits)+
+    geom_text(aes(label=ifelse(percent >= 0.01, scales::comma(Commitment, accuracy=0.1,big.mark = ",")," ")),
+              position=position_stack(vjust=0.5), colour="black",size = 5) +
+    # geom_text(aes(label=ifelse(percent >= 0.09, paste0(scales::comma(Commitment, accuracy=0.01,big.mark = ",")," ")," ")),
+    #           position=position_stack(vjust=0.5), colour="black",size = 5) + # percent >= 0.4, 
     labs(title = titletext) +
     scale_fill_manual(values=sector.colors)
   # +facet_wrap(~ Recipient,scales="free")

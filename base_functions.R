@@ -63,6 +63,10 @@ if (!require("webshot")) {
   library(webshot)
 }
 
+# 
+# subDir = 'figures'
+# dir.create(file.path(getwd(), subDir), showWarnings = FALSE)
+
 
 # if (!require("ggbeeswarm")) {
 #   install.packages("ggbeeswarm")
@@ -172,7 +176,7 @@ data_filtering = function(inputdata){
     'GCF', #'Green Climate Fund',
     'WB', # 'World Bank'
     'Australia', 'Canada','Denmark','France','Germany', 'Japan', 'Korea', 
-    'Netherlands', 'Sweden', 'Switzerland', 'United Kingdom','United States'
+    'Netherlands', 'Sweden', 'Switzerland', 'United Kingdom','United States' 
   ))
   
   # transport and storage; Energy; Industry, construction and mining; General environment protection; and Other multisector
@@ -267,7 +271,6 @@ data_filtering = function(inputdata){
 
 
 data_basic_cleaning = function(filename){
-  read_excel
   inputdata = read.csv(filename,header = TRUE)
   inputdata = inputdata %>% 
     rename(
@@ -625,8 +628,7 @@ sector.colors <- c("Energy" = "#71d0f5", # 09488C
                     "Other Multisector" = "#d2af81")
 
 fund.colors <- c("Commitments" = "#005596",#"Orange",#"#71d0f5", # 09488C 
-                   "Disbursements" = "#ca6b18"#"Blue"#"#47732e" # BE000D
-                   )
+                   "Disbursements" = "#ca6b18")#"Blue"#"#47732e" # BE000D)
 
 alloc.colors <- c("Debt"=  "#4c8fba" , "Grant"="#f4b810",
                   "Mezzanine" = "#2ac2c2","Equity & shares" = "#de663e" )
@@ -635,9 +637,6 @@ alloc.colors <- c("Debt"=  "#4c8fba" , "Grant"="#f4b810",
 # f4b810
 # de663e
 # ff912b
-
-
-
 
 # https://sashamaps.net/docs/resources/20-colors/
 donor_sector.colors <- c("Transport policy and administrative management" = "#fabed4", # 09488C 
@@ -681,3 +680,16 @@ donor_count_multilat_colors<- c("Asian Development Bank" = "#800000", # 09488C
                          "United Kingdom" = "#000075",
                          "United States" = '#469990',
                          "GCF"="#808000", "World Bank" = "#b74a70")# 7B5931
+
+
+export_formattable <- function(f, file, width = "100%", height = NULL, 
+                               background = "white", delay = 0.2)
+{
+  w <- as.htmlwidget(f, width = width, height = height)
+  path <- html_print(w, background = background, viewer = NULL)
+  url <- paste0("file:///", gsub("\\\\", "/", normalizePath(path)))
+  webshot(url,
+          file = file,
+          selector = ".formattable_widget",
+          delay = delay)
+}
